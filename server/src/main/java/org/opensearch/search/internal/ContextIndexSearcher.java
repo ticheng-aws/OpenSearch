@@ -537,6 +537,11 @@ public class ContextIndexSearcher extends IndexSearcher implements Releasable {
             leafSlices = MaxTargetSliceSupplier.getSlices(leaves, targetMaxSlice);
             logger.debug("Slice count using max target slice supplier [{}]", leafSlices.length);
         }
+        logger.info("The length of the leaf slices is [{}]", leafSlices.length);
+        if (leafSlices.length == 1) {
+            logger.info("The length of the leaf slices is 1");
+            throw new RuntimeException("The length of the leaf slices is 1");
+        }
         return leafSlices;
     }
 }

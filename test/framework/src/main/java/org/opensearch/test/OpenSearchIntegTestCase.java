@@ -1642,6 +1642,9 @@ public abstract class OpenSearchIntegTestCase extends OpenSearchTestCase {
             }
         }
         assertThat(actualErrors, emptyIterable());
+
+        bogusIds.addAll(indexRandomForMultipleSlices(indicesArray));
+
         if (!bogusIds.isEmpty()) {
             // delete the bogus types again - it might trigger merges or at least holes in the segments and enforces deleted docs!
             for (List<String> doc : bogusIds) {
@@ -1657,6 +1660,27 @@ public abstract class OpenSearchIntegTestCase extends OpenSearchTestCase {
                 client().admin().indices().prepareRefresh(indicesArray).setIndicesOptions(IndicesOptions.lenientExpandOpen()).get()
             );
         }
+    }
+
+    /*
+    * This method ingests bogus documents for the given indices such that multiple slices
+    * are formed. This is greatly useful for testing with the concurrent search use-case.
+    * */
+    public Set<List<String>> indexRandomForMultipleSlices(String... indices) {
+        Set<List<String>> bogusIds = new HashSet<>();
+        for (String index : indices) {
+            int slices = 2;
+            int numDocs = getNumShards(index).totalNumShards * slices;
+            while (slices-- > 0) {
+                for (int i = 0; i < numDocs; i++) {
+                    String id = "bogus_doc_" + randomRealisticUnicodeOfLength(between(1, 10)) + dummmyDocIdGenerator.incrementAndGet();
+                    client().prepareIndex().setIndex(index).setId(id).setSource("{}", MediaTypeRegistry.JSON).setRouting(id).get();
+                    bogusIds.add(Arrays.asList(index, id));
+                }
+                refresh();
+            }
+        }
+        return bogusIds;
     }
 
     private final AtomicInteger dummmyDocIdGenerator = new AtomicInteger();

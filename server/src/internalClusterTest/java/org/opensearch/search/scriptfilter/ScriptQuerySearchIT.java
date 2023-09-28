@@ -213,6 +213,7 @@ public class ScriptQuerySearchIT extends ParameterizedOpenSearchIntegTestCase {
             .setSource(jsonBuilder().startObject().field("test", "value beck").field("num1", 3.0f).endObject())
             .get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         logger.info("running doc['num1'].value > 1");
         SearchResponse response = client().prepareSearch()
@@ -267,6 +268,7 @@ public class ScriptQuerySearchIT extends ParameterizedOpenSearchIntegTestCase {
                 client().prepareIndex("test-index").setId("" + i).setSource("num1", i).get();
             }
             refresh();
+            indexRandomForConcurrentSearch("test-index");
 
             // Execute with search.allow_expensive_queries = null => default value = false => success
             Script script = new Script(ScriptType.INLINE, CustomScriptPlugin.NAME, "doc['num1'].value > 1", Collections.emptyMap());

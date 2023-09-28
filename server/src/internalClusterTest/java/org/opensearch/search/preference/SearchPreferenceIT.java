@@ -110,6 +110,7 @@ public class SearchPreferenceIT extends ParameterizedOpenSearchIntegTestCase {
             client().prepareIndex("test").setId("" + i).setSource("field1", "value1").get();
         }
         refresh();
+        indexRandomForConcurrentSearch("test");
         internalCluster().stopRandomDataNode();
         client().admin().cluster().prepareHealth().setWaitForStatus(ClusterHealthStatus.RED).get();
         String[] preferences = new String[] {
@@ -149,6 +150,7 @@ public class SearchPreferenceIT extends ParameterizedOpenSearchIntegTestCase {
 
         client().prepareIndex("test").setSource("field1", "value1").get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         final Client client = internalCluster().smartClient();
         SearchResponse searchResponse = client.prepareSearch("test").setQuery(matchAllQuery()).get();
@@ -165,6 +167,7 @@ public class SearchPreferenceIT extends ParameterizedOpenSearchIntegTestCase {
 
         client().prepareIndex("test").setSource("field1", "value1").get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch().setQuery(matchAllQuery()).get();
         assertThat(searchResponse.getHits().getTotalHits().value, equalTo(1L));
@@ -211,6 +214,7 @@ public class SearchPreferenceIT extends ParameterizedOpenSearchIntegTestCase {
         ensureGreen();
         client().prepareIndex("test").setSource("field1", "value1").get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         final Client client = internalCluster().smartClient();
         // multiple wildchar to cover multi-param usecase

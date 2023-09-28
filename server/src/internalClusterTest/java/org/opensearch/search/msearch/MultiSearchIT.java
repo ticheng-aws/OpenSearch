@@ -77,6 +77,7 @@ public class MultiSearchIT extends ParameterizedOpenSearchIntegTestCase {
         client().prepareIndex("test").setId("1").setSource("field", "xxx").get();
         client().prepareIndex("test").setId("2").setSource("field", "yyy").get();
         refresh();
+        indexRandomForConcurrentSearch(3, "test");
         MultiSearchResponse response = client().prepareMultiSearch()
             .add(client().prepareSearch("test").setQuery(QueryBuilders.termQuery("field", "xxx")))
             .add(client().prepareSearch("test").setQuery(QueryBuilders.termQuery("field", "yyy")))
@@ -101,6 +102,7 @@ public class MultiSearchIT extends ParameterizedOpenSearchIntegTestCase {
             client().prepareIndex("test").setId(Integer.toString(i)).setSource("{}", MediaTypeRegistry.JSON).get();
         }
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         int numSearchRequests = randomIntBetween(1, 64);
         MultiSearchRequest request = new MultiSearchRequest();

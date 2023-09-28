@@ -132,6 +132,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
         refresh();
         // check the numDocs
         assertDocumentCount("test", 3);
+        indexRandomForConcurrentSearch("test");
 
         searchResponse = client().prepareSearch("test").setQuery(termQuery("n_field1", "n_value1_1")).get();
         assertThat(searchResponse.getHits().getTotalHits().value, equalTo(0L));
@@ -293,6 +294,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
         refresh();
         // check the numDocs
         assertDocumentCount("test", 7);
+        indexRandomForConcurrentSearch("test");
 
         // do some multi nested queries
         SearchResponse searchResponse = client().prepareSearch("test")
@@ -567,6 +569,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
             )
             .get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch("test")
             .setQuery(QueryBuilders.matchAllQuery())
@@ -656,6 +659,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
             .get();
         // Doc with missing nested docs if nested filter is used
         refresh();
+        indexRandomForConcurrentSearch("test");
         client().prepareIndex("test")
             .setId("3")
             .setSource(
@@ -675,6 +679,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
             )
             .get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchRequestBuilder searchRequestBuilder = client().prepareSearch("test")
             .setQuery(QueryBuilders.matchAllQuery())
@@ -1035,6 +1040,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
             .get();
 
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch()
             .setQuery(termQuery("_id", 2))
@@ -1216,6 +1222,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
             .get();
         refresh();
 
+        indexRandomForConcurrentSearch("test");
         // Without nested filter
         SearchResponse searchResponse = client().prepareSearch()
             .setQuery(matchAllQuery())
@@ -1595,6 +1602,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
             .get();
         assertTrue(indexResponse2.getShardInfo().getSuccessful() > 0);
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch("test")
             .addSort(SortBuilders.fieldSort("users.first").setNestedPath("users").order(SortOrder.ASC))
@@ -1627,6 +1635,7 @@ public class SimpleNestedIT extends ParameterizedOpenSearchIntegTestCase {
         client().prepareIndex("test").setId("1").setSource("field", "value").get();
         refresh();
         ensureSearchable("test");
+        indexRandomForConcurrentSearch("test");
 
         // No nested mapping yet, there shouldn't be anything in the fixed bit set cache
         ClusterStatsResponse clusterStatsResponse = client().admin().cluster().prepareClusterStats().get();

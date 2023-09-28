@@ -275,6 +275,7 @@ public class SimpleQueryStringIT extends ParameterizedOpenSearchIntegTestCase {
         );
         client().prepareIndex("test").setId("1").setSource("body", "foo bar baz").get();
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch().setQuery(simpleQueryStringQuery("foo bar baz").field("body")).get();
         assertHitCount(searchResponse, 1L);
@@ -359,6 +360,8 @@ public class SimpleQueryStringIT extends ParameterizedOpenSearchIntegTestCase {
             client().prepareIndex("test2").setId("10").setSource("field", 5)
         );
         refresh();
+        indexRandomForConcurrentSearch("test1");
+        indexRandomForConcurrentSearch("test2");
 
         SearchResponse searchResponse = client().prepareSearch()
             .setAllowPartialSearchResults(true)
@@ -419,6 +422,7 @@ public class SimpleQueryStringIT extends ParameterizedOpenSearchIntegTestCase {
         client().prepareIndex("test").setId("2").setSource("foo", 234, "bar", "bcd").get();
 
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch().setQuery(simpleQueryStringQuery("123").field("foo").field("bar")).get();
         assertHitCount(searchResponse, 1L);
@@ -430,6 +434,7 @@ public class SimpleQueryStringIT extends ParameterizedOpenSearchIntegTestCase {
         client().prepareIndex("test").setId("2").setSource("foo", 234, "bar", "bcd").get();
 
         refresh();
+        indexRandomForConcurrentSearch("test");
 
         SearchResponse searchResponse = client().prepareSearch().setQuery(simpleQueryStringQuery("test").field("_index")).get();
         assertHitCount(searchResponse, 2L);

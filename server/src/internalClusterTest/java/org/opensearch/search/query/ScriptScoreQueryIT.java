@@ -116,6 +116,7 @@ public class ScriptScoreQueryIT extends ParameterizedOpenSearchIntegTestCase {
             client().prepareIndex("test-index").setId("" + i).setSource("field1", "text" + (i % 2), "field2", i).get();
         }
         refresh();
+        indexRandomForConcurrentSearch("test-index");
 
         Map<String, Object> params = new HashMap<>();
         params.put("param1", 0.1);
@@ -142,6 +143,7 @@ public class ScriptScoreQueryIT extends ParameterizedOpenSearchIntegTestCase {
             client().prepareIndex("test-index").setId("" + i).setSource("field1", "text" + i, "field2", i).get();
         }
         refresh();
+        indexRandomForConcurrentSearch("test-index");
 
         Map<String, Object> params = new HashMap<>();
         params.put("param1", 0.1);
@@ -164,6 +166,7 @@ public class ScriptScoreQueryIT extends ParameterizedOpenSearchIntegTestCase {
         client().prepareIndex("test-index2").setId("2").setSource("field1", "2019-10-01", "field2", 2).get();
         client().prepareIndex("test-index2").setId("3").setSource("field1", "2019-11-01", "field2", 3).get();
         refresh();
+        indexRandomForConcurrentSearch("test-index2");
 
         RangeQueryBuilder rangeQB = new RangeQueryBuilder("field1").from("2019-01-01"); // the query should be rewritten to from:null
         Map<String, Object> params = new HashMap<>();
@@ -182,6 +185,7 @@ public class ScriptScoreQueryIT extends ParameterizedOpenSearchIntegTestCase {
                 client().prepareIndex("test-index").setId("" + i).setSource("field1", "text" + (i % 2), "field2", i).get();
             }
             refresh();
+            indexRandomForConcurrentSearch("test-index");
 
             Map<String, Object> params = new HashMap<>();
             params.put("param1", 0.1);

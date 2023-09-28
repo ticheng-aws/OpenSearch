@@ -374,6 +374,7 @@ public class QueryStringIT extends ParameterizedOpenSearchIntegTestCase {
 
         client().prepareIndex("testindex").setId("1").setSource("field_A0", "foo bar baz").get();
         refresh();
+        indexRandomForConcurrentSearch("testindex");
 
         // single field shouldn't trigger the limit
         doAssertOneHitForQueryString("field_A0:foo");
